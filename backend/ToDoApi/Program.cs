@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 using ToDoApi.Data;
+using ToDoApi.Middleware;
+using ToDoApi.Models.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskRequestValidator>();
 
 builder.Services.AddCors(options =>
 {
@@ -21,6 +26,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -36,7 +43,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowReactApp");
-
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
