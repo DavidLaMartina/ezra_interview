@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { config } from '../config/env';
 import { Task, TaskStatus, TaskPriority, TaskListResponse } from '../types/Task';
 import { taskApi } from '../services/api';
 import TaskList from './TaskList';
@@ -32,7 +33,7 @@ const TaskManager: React.FC = () => {
         search: searchFilter || undefined,
         includeDeleted: showDeleted,
         cursor,
-        limit: 10
+        limit: config.features.paginationLimit
       });
 
       if (append) {
