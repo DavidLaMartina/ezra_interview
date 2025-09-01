@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using TodoApi.Data;
+using ToDoApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<TodoDbContext>(options =>
+builder.Services.AddDbContext<ToDoDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();

@@ -25,7 +25,7 @@ namespace ToDoApi.Migrations
                     Tags = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    DeletedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

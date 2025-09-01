@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TodoApi.Models;
+namespace ToDoApi.Models;
 
 public class TaskItem
 {
@@ -24,7 +24,7 @@ public class TaskItem
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    public DateTime DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 }
 
 public enum TaskStatus

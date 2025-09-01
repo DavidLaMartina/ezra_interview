@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TodoApi.Data;
+using ToDoApi.Data;
 
 #nullable disable
 
 namespace ToDoApi.Migrations
 {
-    [DbContext(typeof(TodoDbContext))]
-    [Migration("20250901143141_InitialCreate")]
+    [DbContext(typeof(ToDoDbContext))]
+    [Migration("20250901152640_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace ToDoApi.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
 
-            modelBuilder.Entity("TodoApi.Models.TaskItem", b =>
+            modelBuilder.Entity("ToDoApi.Models.TaskItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,7 +29,7 @@ namespace ToDoApi.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("DeletedAt")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
