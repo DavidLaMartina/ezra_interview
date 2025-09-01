@@ -52,3 +52,28 @@ export interface BulkUpdateRequest {
   status?: TaskStatus;
   delete?: boolean;
 }
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  errors?: ValidationError[];
+}
+
+export interface ApiResponseBase {
+  success: boolean;
+  message?: string;
+  errors?: ValidationError[];
+}
+
+export interface ValidationError {
+  field: string;
+  message: string;
+}
+
+export class ApiError extends Error {
+  constructor(message: string, public status: number, public validationErrors?: ValidationError[]) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}

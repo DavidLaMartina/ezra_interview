@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { config } from '../config/env';
-import { Task, TaskStatus, TaskPriority, TaskListResponse } from '../types/Task';
+import { Task, TaskStatus, TaskPriority, TaskListResponse, ApiError } from '../types/Task';
 import { taskApi } from '../services/api';
+import { useToast } from './ToastContainer';
+import { config } from '../config/env';
 import TaskList from './TaskList';
 import TaskForm from './TaskForm';
 import FilterBar from './FilterBar';
@@ -10,7 +11,6 @@ import '../styles/TaskManager.css';
 const TaskManager: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [nextCursor, setNextCursor] = useState<number | undefined>();
 
@@ -22,10 +22,11 @@ const TaskManager: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
 
+  const { showSuccess, showApiError } = useToast();
+
   const loadTasks = async (cursor?: number, append = false) => {
     try {
       setLoading(!append);
-      setError(null);
 
       const response: TaskListResponse = await taskApi.getTasks({
         status: statusFilter,
@@ -44,8 +45,12 @@ const TaskManager: React.FC = () => {
 
       setHasNextPage(response.hasNextPage);
       setNextCursor(response.nextCursor);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load tasks');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showApiError(error);
+      } else {
+        showApiError(new ApiError('Failed to load tasks', 0));
+      }
     } finally {
       setLoading(false);
     }
@@ -59,36 +64,56 @@ const TaskManager: React.FC = () => {
     try {
       await taskApi.createTask(taskData);
       setShowCreateForm(false);
+      showSuccess('Success', 'Task created successfully');
       loadTasks();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create task');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showApiError(error);
+      } else {
+        showApiError(new ApiError('Failed to create task', 0));
+      }
     }
   };
 
   const handleUpdateTask = async (id: number, taskData: any) => {
     try {
       await taskApi.updateTask(id, taskData);
+      showSuccess('Success', 'Task updated successfully');
       loadTasks();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update task');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showApiError(error);
+      } else {
+        showApiError(new ApiError('Failed to update task', 0));
+      }
     }
   };
 
   const handleDeleteTask = async (id: number) => {
     try {
       await taskApi.deleteTask(id);
+      showSuccess('Success', 'Task deleted successfully');
       loadTasks();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete task');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showApiError(error);
+      } else {
+        showApiError(new ApiError('Failed to delete task', 0));
+      }
     }
   };
 
   const handleRestoreTask = async (id: number) => {
     try {
       await taskApi.restoreTask(id);
+      showSuccess('Success', 'Task restored successfully');
       loadTasks();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to restore task');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showApiError(error);
+      } else {
+        showApiError(new ApiError('Failed to restore task', 0));
+      }
     }
   };
 
@@ -101,9 +126,14 @@ const TaskManager: React.FC = () => {
         status: TaskStatus.Completed,
       });
       setSelectedTasks([]);
+      showSuccess('Success', `${selectedTasks.length} tasks completed successfully`);
       loadTasks();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to complete tasks');
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showApiError(error);
+      } else {
+        showApiError(new ApiError('Failed to complete tasks', 0));
+      }
     }
   };
 
@@ -116,8 +146,14 @@ const TaskManager: React.FC = () => {
         delete: true,
       });
       setSelectedTasks([]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete tasks');
+      showSuccess('Success', `${selectedTasks.length} tasks deleted successfully`);
+      loadTasks();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        showApiError(error);
+      } else {
+        showApiError(new ApiError('Failed to delete tasks', 0));
+      }
     }
   };
 
@@ -130,18 +166,11 @@ const TaskManager: React.FC = () => {
   return (
     <div className="task-manager">
       <div className="task-manager-header">
-        <h1>Todo Manager</h1>
+        <h1>{config.app.name}</h1>
         <button className="btn btn-primary" onClick={() => setShowCreateForm(true)}>
           + Add Task
         </button>
       </div>
-
-      {error && (
-        <div className="error-message">
-          {error}
-          <button onClick={() => setError(null)}>&times;</button>
-        </div>
-      )}
 
       <FilterBar
         statusFilter={statusFilter}

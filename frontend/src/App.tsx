@@ -1,11 +1,14 @@
 import React from 'react';
 import TaskManager from './components/TaskManager';
+import { ToastProvider } from './components/ToastContainer';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <TaskManager />
+      <ToastProvider>
+        <TaskManager />
+      </ToastProvider>
     </div>
   );
 }

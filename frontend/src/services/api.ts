@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { config } from '../config/env';
 import {
   Task,
@@ -8,6 +8,9 @@ import {
   BulkUpdateRequest,
   TaskStatus,
   TaskPriority,
+  ApiResponse,
+  ApiResponseBase,
+  ApiError,
 } from '../types/Task';
 
 const api = axios.create({
@@ -15,33 +18,37 @@ const api = axios.create({
   timeout: config.api.timeout,
 });
 
-// Add request interceptor for debugging
-if (config.features.enableDebug) {
-  api.interceptors.request.use(
-    request => {
-      console.log('API Request:', request.method?.toUpperCase(), request.url, request.data);
-      return request;
-    },
-    error => {
-      console.error('API Request Error:', error);
-      return Promise.reject(error);
-    }
-  );
+const handleApiError = (error: AxiosError): never => {
+  if (error.response) {
+    const responseData = error.response.data as ApiResponseBase;
 
-  api.interceptors.response.use(
-    response => {
-      console.log('API Response:', response.status, response.config.url);
-      return response;
-    },
-    error => {
-      console.error('API Response Error:', error.response?.status, error.response?.data);
-      return Promise.reject(error);
-    }
-  );
+    throw new ApiError(
+      responseData?.message || 'An error occurred',
+      error.response.status,
+      responseData?.errors
+    );
+  } else if (error.request) {
+    throw new ApiError('Network error - please check your connection', 0);
+  } else {
+    throw new ApiError('An unexpected error occurred', 0);
+  }
+};
+
+api.interceptors.response.use(
+  response => response,
+  (error: AxiosError) => {
+    handleApiError(error);
+  }
+);
+
+if (config.features.enableDebug) {
+  api.interceptors.request.use(request => {
+    console.log('API Request:', request.method?.toUpperCase(), request.url, request.data);
+    return request;
+  });
 }
 
 export const taskApi = {
-  // Get tasks with filtering and pagination
   getTasks: async (
     params: {
       status?: TaskStatus;
@@ -52,45 +59,83 @@ export const taskApi = {
       limit?: number;
     } = {}
   ): Promise<TaskListResponse> => {
-    // Use environment variable for default limit
     const finalParams = {
       ...params,
       limit: params.limit || config.features.paginationLimit,
     };
 
-    const response = await api.get('/tasks', { params: finalParams });
-    return response.data;
+    const response = await api.get<ApiResponse<TaskListResponse>>('/tasks', {
+      params: finalParams,
+    });
+
+    if (!response.data.success || !response.data.data) {
+      throw new ApiError(response.data.message || 'Failed to fetch tasks', response.status);
+    }
+
+    return response.data.data;
   },
 
-  // Get single task
   getTask: async (id: number): Promise<Task> => {
-    const response = await api.get(`/tasks/${id}`);
-    return response.data;
+    const response = await api.get<ApiResponse<Task>>(`/tasks/${id}`);
+
+    if (!response.data.success || !response.data.data) {
+      throw new ApiError(response.data.message || 'Failed to fetch task', response.status);
+    }
+
+    return response.data.data;
   },
 
-  // Create task
   createTask: async (task: CreateTaskRequest): Promise<Task> => {
-    const response = await api.post('/tasks', task);
-    return response.data;
+    const response = await api.post<ApiResponse<Task>>('/tasks', task);
+
+    if (!response.data.success || !response.data.data) {
+      throw new ApiError(
+        response.data.message || 'Failed to create task',
+        response.status,
+        response.data.errors
+      );
+    }
+
+    return response.data.data;
   },
 
-  // Update task
   updateTask: async (id: number, task: UpdateTaskRequest): Promise<void> => {
-    await api.put(`/tasks/${id}`, task);
+    const response = await api.put<ApiResponseBase>(`/tasks/${id}`, task);
+
+    if (!response.data.success) {
+      throw new ApiError(
+        response.data.message || 'Failed to update task',
+        response.status,
+        response.data.errors
+      );
+    }
   },
 
-  // Delete task (soft delete)
   deleteTask: async (id: number): Promise<void> => {
-    await api.delete(`/tasks/${id}`);
+    const response = await api.delete<ApiResponseBase>(`/tasks/${id}`);
+
+    if (!response.data.success) {
+      throw new ApiError(response.data.message || 'Failed to delete task', response.status);
+    }
   },
 
-  // Restore deleted task
   restoreTask: async (id: number): Promise<void> => {
-    await api.post(`/tasks/${id}/restore`);
+    const response = await api.post<ApiResponseBase>(`/tasks/${id}/restore`);
+
+    if (!response.data.success) {
+      throw new ApiError(response.data.message || 'Failed to restore task', response.status);
+    }
   },
 
-  // Bulk operations
   bulkUpdate: async (request: BulkUpdateRequest): Promise<void> => {
-    await api.patch('/tasks/bulk', request);
+    const response = await api.patch<ApiResponseBase>('/tasks/bulk', request);
+
+    if (!response.data.success) {
+      throw new ApiError(
+        response.data.message || 'Failed to perform bulk update',
+        response.status,
+        response.data.errors
+      );
+    }
   },
 };
