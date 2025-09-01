@@ -1,0 +1,73 @@
+{
+  "tasks": [
+    {
+      "title": "Set up project repository",
+      "description": "Initialize Git repo and set up basic project structure",
+      "status": 2,
+      "priority": 2,
+      "tags": "[\"setup\", \"git\"]"
+    },
+    {
+      "title": "Design database schema",
+      "description": "Create ERD and define all necessary tables and relationships",
+      "status": 2,
+      "priority": 2,
+      "tags": "[\"database\", \"design\"]"
+    },
+    {
+      "title": "Implement user authentication",
+      "description": "Add JWT-based authentication system",
+      "status": 1,
+      "priority": 2,
+      "tags": "[\"auth\", \"security\"]",
+      "dueDate": "2025-09-03T00:00:00Z"
+    },
+    {
+      "title": "Write unit tests for API endpoints",
+      "description": "Ensure all CRUD operations are properly tested",
+      "status": 0,
+      "priority": 1,
+      "tags": "[\"testing\", \"api\"]",
+      "dueDate": "2025-09-06T00:00:00Z"
+    },
+    {
+      "title": "Deploy to staging environment",
+      "description": "Set up CI/CD pipeline and deploy to staging for testing",
+      "status": 0,
+      "priority": 1,
+      "tags": "[\"deployment\", \"devops\"]",
+      "dueDate": "2025-09-08T00:00:00Z"
+    },
+    {
+      "title": "Fix responsive design issues",
+      "description": "Mobile layout needs work on task list page",
+      "status": 0,
+      "priority": 0,
+      "tags": "[\"frontend\", \"ui\", \"mobile\"]",
+      "dueDate": "2025-09-11T00:00:00Z"
+    },
+    {
+      "title": "Update documentation",
+      "description": "API documentation is out of date after recent changes",
+      "status": 0,
+      "priority": 0,
+      "tags": "[\"docs\"]"
+    },
+    {
+      "title": "Code review for feature branch",
+      "description": "Review pull request #42 - new search functionality",
+      "status": 0,
+      "priority": 2,
+      "tags": "[\"review\", \"urgent\"]",
+      "dueDate": "2025-09-02T00:00:00Z"
+    },
+    {
+      "title": "Old task that was deleted",
+      "description": "This task was completed and then deleted",
+      "status": 2,
+      "priority": 0,
+      "tags": "[\"archived\"]",
+      "deletedAt": "2025-08-25T00:00:00Z"
+    }
+  ]
+}
