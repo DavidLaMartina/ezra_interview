@@ -21,7 +21,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onStatusChange,
   onPriorityChange,
   onSearchChange,
-  onShowDeletedChange
+  onShowDeletedChange,
 }) => {
   return (
     <div className="filter-bar">
@@ -30,7 +30,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           type="text"
           placeholder="Search tasks..."
           value={searchFilter}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={e => onSearchChange(e.target.value)}
           className="search-input"
         />
       </div>
@@ -39,7 +39,9 @@ const FilterBar: React.FC<FilterBarProps> = ({
         <label>Status:</label>
         <select
           value={statusFilter ?? ''}
-          onChange={(e) => onStatusChange(e.target.value ? Number(e.target.value) as TaskStatus : undefined)}
+          onChange={e =>
+            onStatusChange(e.target.value ? (Number(e.target.value) as TaskStatus) : undefined)
+          }
         >
           <option value="">All Status</option>
           <option value={TaskStatus.Pending}>Pending</option>
@@ -52,7 +54,9 @@ const FilterBar: React.FC<FilterBarProps> = ({
         <label>Priority:</label>
         <select
           value={priorityFilter ?? ''}
-          onChange={(e) => onPriorityChange(e.target.value ? Number(e.target.value) as TaskPriority : undefined)}
+          onChange={e =>
+            onPriorityChange(e.target.value ? (Number(e.target.value) as TaskPriority) : undefined)
+          }
         >
           <option value="">All Priorities</option>
           <option value={TaskPriority.Low}>Low</option>
@@ -66,7 +70,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           <input
             type="checkbox"
             checked={showDeleted}
-            onChange={(e) => onShowDeletedChange(e.target.checked)}
+            onChange={e => onShowDeletedChange(e.target.checked)}
           />
           <span className="checkmark"></span>
           Show Deleted
@@ -74,7 +78,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       <div className="filter-group">
-        <button 
+        <button
           className="btn btn-secondary"
           onClick={() => {
             onStatusChange(undefined);

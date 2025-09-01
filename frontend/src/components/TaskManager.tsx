@@ -5,7 +5,7 @@ import { taskApi } from '../services/api';
 import TaskList from './TaskList';
 import TaskForm from './TaskForm';
 import FilterBar from './FilterBar';
-import '../styles/TaskManager.css'
+import '../styles/TaskManager.css';
 
 const TaskManager: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -33,7 +33,7 @@ const TaskManager: React.FC = () => {
         search: searchFilter || undefined,
         includeDeleted: showDeleted,
         cursor,
-        limit: config.features.paginationLimit
+        limit: config.features.paginationLimit,
       });
 
       if (append) {
@@ -98,7 +98,7 @@ const TaskManager: React.FC = () => {
     try {
       await taskApi.bulkUpdate({
         taskIds: selectedTasks,
-        status: TaskStatus.Completed
+        status: TaskStatus.Completed,
       });
       setSelectedTasks([]);
       loadTasks();
@@ -113,7 +113,7 @@ const TaskManager: React.FC = () => {
     try {
       await taskApi.bulkUpdate({
         taskIds: selectedTasks,
-        delete: true
+        delete: true,
       });
       setSelectedTasks([]);
     } catch (err) {
@@ -125,16 +125,13 @@ const TaskManager: React.FC = () => {
     if (hasNextPage && nextCursor) {
       loadTasks(nextCursor, true);
     }
-  }
+  };
 
   return (
     <div className="task-manager">
       <div className="task-manager-header">
         <h1>Todo Manager</h1>
-        <button 
-          className="btn btn-primary"
-          onClick={() => setShowCreateForm(true)}
-        >
+        <button className="btn btn-primary" onClick={() => setShowCreateForm(true)}>
           + Add Task
         </button>
       </div>
@@ -166,10 +163,7 @@ const TaskManager: React.FC = () => {
           <button className="btn btn-danger" onClick={handleBulkDelete}>
             Delete Selected
           </button>
-          <button 
-            className="btn btn-secondary" 
-            onClick={() => setSelectedTasks([])}
-          >
+          <button className="btn btn-secondary" onClick={() => setSelectedTasks([])}>
             Clear Selection
           </button>
         </div>
@@ -190,21 +184,14 @@ const TaskManager: React.FC = () => {
 
       {hasNextPage && (
         <div className="load-more">
-          <button 
-            className="btn btn-secondary" 
-            onClick={handleLoadMore}
-            disabled={loading}
-          >
+          <button className="btn btn-secondary" onClick={handleLoadMore} disabled={loading}>
             {loading ? 'Loading...' : 'Load More'}
           </button>
         </div>
       )}
 
       {showCreateForm && (
-        <TaskForm
-          onSubmit={handleCreateTask}
-          onCancel={() => setShowCreateForm(false)}
-        />
+        <TaskForm onSubmit={handleCreateTask} onCancel={() => setShowCreateForm(false)} />
       )}
     </div>
   );

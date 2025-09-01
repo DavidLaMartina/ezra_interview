@@ -1,5 +1,5 @@
 import React from 'react';
-import { Task, TaskStatus, TaskPriority } from '../types/Task';
+import { Task } from '../types/Task';
 import TaskItem from './TaskItem';
 import '../styles/TaskList.css';
 
@@ -18,7 +18,7 @@ const TaskList: React.FC<TaskListProps> = ({
   onSelectionChange,
   onUpdate,
   onDelete,
-  onRestore
+  onRestore,
 }) => {
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -57,20 +57,20 @@ const TaskList: React.FC<TaskListProps> = ({
             ref={input => {
               if (input) input.indeterminate = isPartiallySelected;
             }}
-            onChange={(e) => handleSelectAll(e.target.checked)}
+            onChange={e => handleSelectAll(e.target.checked)}
           />
           <span className="checkmark"></span>
           Select All ({tasks.length})
         </label>
       </div>
-      
+
       <div className="task-list-items">
         {tasks.map(task => (
           <TaskItem
             key={task.id}
             task={task}
             selected={selectedTasks.includes(task.id)}
-            onSelect={(checked) => handleSelectTask(task.id, checked)}
+            onSelect={checked => handleSelectTask(task.id, checked)}
             onUpdate={onUpdate}
             onDelete={onDelete}
             onRestore={onRestore}

@@ -14,13 +14,13 @@ export interface Task {
 export enum TaskStatus {
   Pending = 0,
   InProgress = 1,
-  Completed = 2
+  Completed = 2,
 }
 
 export enum TaskPriority {
   Low = 0,
   Medium = 1,
-  High = 2
+  High = 2,
 }
 
 export interface TaskListResponse {

@@ -1,7 +1,7 @@
 .task-list {
   background-color: white;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 }
 
@@ -22,7 +22,7 @@
   color: #6c757d;
   background-color: white;
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .task-list-empty p {
@@ -40,7 +40,7 @@
   gap: 8px;
 }
 
-.checkbox-wrapper input[type="checkbox"] {
+.checkbox-wrapper input[type='checkbox'] {
   opacity: 0;
   position: absolute;
   width: 0;
@@ -68,7 +68,7 @@
 }
 
 .checkbox-wrapper input:checked ~ .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   left: 6px;
@@ -86,7 +86,7 @@
 }
 
 .checkbox-wrapper input:indeterminate ~ .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   left: 3px;

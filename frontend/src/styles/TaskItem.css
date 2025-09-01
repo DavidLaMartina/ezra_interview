@@ -207,20 +207,20 @@
     align-items: stretch;
     gap: 12px;
   }
-  
+
   .task-actions {
     justify-content: flex-end;
   }
-  
+
   .task-meta {
     gap: 8px;
   }
-  
+
   .task-edit-controls {
     flex-direction: column;
     gap: 8px;
   }
-  
+
   .task-edit-actions {
     justify-content: flex-end;
   }

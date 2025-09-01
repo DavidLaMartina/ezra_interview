@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,7 +15,7 @@
 .task-form-modal {
   background-color: white;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 600px;
   max-height: 90vh;
@@ -92,7 +92,7 @@
 .form-group select:focus {
   outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .form-group input.error,
@@ -139,28 +139,28 @@
   .task-form-overlay {
     padding: 10px;
   }
-  
+
   .task-form-modal {
     max-height: 95vh;
   }
-  
+
   .task-form-header {
     padding: 20px 20px 0 20px;
   }
-  
+
   .task-form {
     padding: 0 20px 20px 20px;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .form-actions {
     flex-direction: column-reverse;
   }
-  
+
   .form-actions .btn {
     width: 100%;
   }

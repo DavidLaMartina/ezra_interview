@@ -13,7 +13,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
     description: '',
     priority: TaskPriority.Medium,
     dueDate: '',
-    tags: ''
+    tags: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -28,7 +28,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
 
     if (formData.tags) {
       try {
-        const tags = formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        const tags = formData.tags
+          .split(',')
+          .map(tag => tag.trim())
+          .filter(tag => tag);
         JSON.stringify(tags); // Validate that we can create valid JSON
       } catch {
         newErrors.tags = 'Invalid tags format';
@@ -41,14 +44,19 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     // Process tags into JSON format
-    const tags = formData.tags 
-      ? JSON.stringify(formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag))
+    const tags = formData.tags
+      ? JSON.stringify(
+          formData.tags
+            .split(',')
+            .map(tag => tag.trim())
+            .filter(tag => tag)
+        )
       : '[]';
 
     const taskData = {
@@ -56,7 +64,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
       description: formData.description.trim() || undefined,
       priority: formData.priority,
       dueDate: formData.dueDate || undefined,
-      tags
+      tags,
     };
 
     onSubmit(taskData);
@@ -64,7 +72,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
 
   const handleInputChange = (field: string, value: string | TaskPriority) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
+
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
@@ -76,7 +84,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
       <div className="task-form-modal">
         <div className="task-form-header">
           <h2>Create New Task</h2>
-          <button className="close-btn" onClick={onCancel}>&times;</button>
+          <button className="close-btn" onClick={onCancel}>
+            &times;
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="task-form">
@@ -86,7 +96,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
               type="text"
               id="title"
               value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
+              onChange={e => handleInputChange('title', e.target.value)}
               className={errors.title ? 'error' : ''}
               placeholder="Enter task title"
               maxLength={200}
@@ -99,7 +109,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
             <textarea
               id="description"
               value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
+              onChange={e => handleInputChange('description', e.target.value)}
               placeholder="Enter task description (optional)"
               rows={3}
             />
@@ -111,7 +121,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
               <select
                 id="priority"
                 value={formData.priority}
-                onChange={(e) => handleInputChange('priority', Number(e.target.value) as TaskPriority)}
+                onChange={e =>
+                  handleInputChange('priority', Number(e.target.value) as TaskPriority)
+                }
               >
                 <option value={TaskPriority.Low}>Low</option>
                 <option value={TaskPriority.Medium}>Medium</option>
@@ -125,7 +137,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
                 type="date"
                 id="dueDate"
                 value={formData.dueDate}
-                onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                onChange={e => handleInputChange('dueDate', e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
               />
             </div>
@@ -137,7 +149,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
               type="text"
               id="tags"
               value={formData.tags}
-              onChange={(e) => handleInputChange('tags', e.target.value)}
+              onChange={e => handleInputChange('tags', e.target.value)}
               className={errors.tags ? 'error' : ''}
               placeholder="Enter tags separated by commas (e.g., urgent, work, personal)"
             />

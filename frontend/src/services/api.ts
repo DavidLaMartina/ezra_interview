@@ -1,6 +1,14 @@
 import axios from 'axios';
 import { config } from '../config/env';
-import { Task, TaskListResponse, CreateTaskRequest, UpdateTaskRequest, BulkUpdateRequest, TaskStatus, TaskPriority } from '../types/Task';
+import {
+  Task,
+  TaskListResponse,
+  CreateTaskRequest,
+  UpdateTaskRequest,
+  BulkUpdateRequest,
+  TaskStatus,
+  TaskPriority,
+} from '../types/Task';
 
 const api = axios.create({
   baseURL: config.api.baseUrl,
@@ -10,22 +18,22 @@ const api = axios.create({
 // Add request interceptor for debugging
 if (config.features.enableDebug) {
   api.interceptors.request.use(
-    (request) => {
+    request => {
       console.log('API Request:', request.method?.toUpperCase(), request.url, request.data);
       return request;
     },
-    (error) => {
+    error => {
       console.error('API Request Error:', error);
       return Promise.reject(error);
     }
   );
 
   api.interceptors.response.use(
-    (response) => {
+    response => {
       console.log('API Response:', response.status, response.config.url);
       return response;
     },
-    (error) => {
+    error => {
       console.error('API Response Error:', error.response?.status, error.response?.data);
       return Promise.reject(error);
     }
@@ -34,20 +42,22 @@ if (config.features.enableDebug) {
 
 export const taskApi = {
   // Get tasks with filtering and pagination
-  getTasks: async (params: {
-    status?: TaskStatus;
-    priority?: TaskPriority;
-    search?: string;
-    includeDeleted?: boolean;
-    cursor?: number;
-    limit?: number;
-  } = {}): Promise<TaskListResponse> => {
+  getTasks: async (
+    params: {
+      status?: TaskStatus;
+      priority?: TaskPriority;
+      search?: string;
+      includeDeleted?: boolean;
+      cursor?: number;
+      limit?: number;
+    } = {}
+  ): Promise<TaskListResponse> => {
     // Use environment variable for default limit
     const finalParams = {
       ...params,
-      limit: params.limit || config.features.paginationLimit
+      limit: params.limit || config.features.paginationLimit,
     };
-    
+
     const response = await api.get('/tasks', { params: finalParams });
     return response.data;
   },

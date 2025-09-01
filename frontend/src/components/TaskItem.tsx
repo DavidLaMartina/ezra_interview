@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { Task, TaskStatus, TaskPriority } from '../types/Task';
 import '../styles/TaskItem.css';
 
@@ -17,7 +17,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   onSelect,
   onUpdate,
   onDelete,
-  onRestore
+  onRestore,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({
@@ -26,13 +26,12 @@ const TaskItem: React.FC<TaskItemProps> = ({
     status: task.status,
     priority: task.priority,
     dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',
-    tags: task.tags
+    tags: task.tags,
   });
 
   const handleStatusToggle = () => {
-    const newStatus = task.status === TaskStatus.Completed
-      ? TaskStatus.Pending
-      : TaskStatus.Completed;
+    const newStatus =
+      task.status === TaskStatus.Completed ? TaskStatus.Pending : TaskStatus.Completed;
 
     onUpdate(task.id, { ...task, status: newStatus });
   };
@@ -44,7 +43,7 @@ const TaskItem: React.FC<TaskItemProps> = ({
   const handleSave = () => {
     onUpdate(task.id, {
       ...editData,
-      dueDate: editData.dueDate || null
+      dueDate: editData.dueDate || null,
     });
     setIsEditing(false);
   };
@@ -56,14 +55,14 @@ const TaskItem: React.FC<TaskItemProps> = ({
       status: task.status,
       priority: task.priority,
       dueDate: task.dueDate ? task.dueDate.split('T')[0] : '',
-      tags: task.tags
+      tags: task.tags,
     });
     setIsEditing(false);
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
-  }
+  };
 
   const parseTags = (tagsString: string): string[] => {
     try {
@@ -75,33 +74,41 @@ const TaskItem: React.FC<TaskItemProps> = ({
 
   const getStatusText = (status: TaskStatus) => {
     switch (status) {
-      case TaskStatus.Pending: return 'Pending';
-      case TaskStatus.InProgress: return 'In Progress';
-      case TaskStatus.Completed: return 'Completed';
-      default: return 'Uknown';
+      case TaskStatus.Pending:
+        return 'Pending';
+      case TaskStatus.InProgress:
+        return 'In Progress';
+      case TaskStatus.Completed:
+        return 'Completed';
+      default:
+        return 'Uknown';
     }
   };
 
   const getPriorityText = (priority: TaskPriority) => {
     switch (priority) {
-      case TaskPriority.Low: return 'Low';
-      case TaskPriority.Medium: return 'Medium';
-      case TaskPriority.High: return 'High';
+      case TaskPriority.Low:
+        return 'Low';
+      case TaskPriority.Medium:
+        return 'Medium';
+      case TaskPriority.High:
+        return 'High';
     }
   };
 
-  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== TaskStatus.Completed;
+  const isOverdue =
+    task.dueDate && new Date(task.dueDate) < new Date() && task.status !== TaskStatus.Completed;
   const isDeleted = !!task.deletedAt;
 
   return (
-    <div className={`task-item ${isDeleted ? 'deleted' : ''} ${task.status === TaskStatus.Completed ? 'completed' : ''}`}>
+    <div
+      className={`task-item ${isDeleted ? 'deleted' : ''} ${
+        task.status === TaskStatus.Completed ? 'completed' : ''
+      }`}
+    >
       <div className="task-item-header">
         <label className="checkbox-wrapper">
-          <input
-            type="checkbox"
-            checked={selected}
-            onChange={(e) => onSelect(e.target.checked)}
-          />
+          <input type="checkbox" checked={selected} onChange={e => onSelect(e.target.checked)} />
           <span className="checkmark"></span>
         </label>
 
@@ -111,13 +118,13 @@ const TaskItem: React.FC<TaskItemProps> = ({
               <input
                 type="text"
                 value={editData.title}
-                onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                onChange={e => setEditData({ ...editData, title: e.target.value })}
                 className="task-title-input"
                 placeholder="Task title"
               />
               <textarea
                 value={editData.description}
-                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                onChange={e => setEditData({ ...editData, description: e.target.value })}
                 className="task-description-input"
                 placeholder="Description (optional)"
                 rows={2}
@@ -125,7 +132,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
               <div className="task-edit-controls">
                 <select
                   value={editData.status}
-                  onChange={(e) => setEditData({ ...editData, status: Number(e.target.value) as TaskStatus })}
+                  onChange={e =>
+                    setEditData({ ...editData, status: Number(e.target.value) as TaskStatus })
+                  }
                 >
                   <option value={TaskStatus.Pending}>Pending</option>
                   <option value={TaskStatus.InProgress}>In Progress</option>
@@ -133,7 +142,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 </select>
                 <select
                   value={editData.priority}
-                  onChange={(e) => setEditData({ ...editData, priority: Number(e.target.value) as TaskPriority })}
+                  onChange={e =>
+                    setEditData({ ...editData, priority: Number(e.target.value) as TaskPriority })
+                  }
                 >
                   <option value={TaskPriority.Low}>Low</option>
                   <option value={TaskPriority.Medium}>Medium</option>
@@ -142,23 +153,29 @@ const TaskItem: React.FC<TaskItemProps> = ({
                 <input
                   type="date"
                   value={editData.dueDate}
-                  onChange={(e) => setEditData({ ...editData, dueDate: e.target.value })}
+                  onChange={e => setEditData({ ...editData, dueDate: e.target.value })}
                 />
               </div>
               <div className="task-edit-actions">
-                <button className="btn btn-success" onClick={handleSave}>Save</button>
-                <button className="btn btn-secondary" onClick={handleCancel}>Cancel</button>
+                <button className="btn btn-success" onClick={handleSave}>
+                  Save
+                </button>
+                <button className="btn btn-secondary" onClick={handleCancel}>
+                  Cancel
+                </button>
               </div>
             </div>
           ) : (
             <>
               <div className="task-content">
-                <h3 className={`task-title ${task.status === TaskStatus.Completed ? 'completed' : ''}`}>
+                <h3
+                  className={`task-title ${
+                    task.status === TaskStatus.Completed ? 'completed' : ''
+                  }`}
+                >
                   {task.title}
                 </h3>
-                {task.description && (
-                  <p className="task-description">{task.description}</p>
-                )}
+                {task.description && <p className="task-description">{task.description}</p>}
                 <div className="task-meta">
                   <span className={`task-status status-${task.status}`}>
                     {getStatusText(task.status)}
@@ -172,7 +189,9 @@ const TaskItem: React.FC<TaskItemProps> = ({
                     </span>
                   )}
                   {parseTags(task.tags).map(tag => (
-                    <span key={tag} className="task-tag">{tag}</span>
+                    <span key={tag} className="task-tag">
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </div>
@@ -184,9 +203,13 @@ const TaskItem: React.FC<TaskItemProps> = ({
           {!isDeleted ? (
             <>
               <button
-                className={`btn btn-sm ${task.status === TaskStatus.Completed ? 'btn-secondary' : 'btn-success'}`}
+                className={`btn btn-sm ${
+                  task.status === TaskStatus.Completed ? 'btn-secondary' : 'btn-success'
+                }`}
                 onClick={handleStatusToggle}
-                title={task.status === TaskStatus.Completed ? 'Mark as pending' : 'Mark as completed'}
+                title={
+                  task.status === TaskStatus.Completed ? 'Mark as pending' : 'Mark as completed'
+                }
               >
                 {task.status === TaskStatus.Completed ? '↶' : '✓'}
               </button>
@@ -206,6 +229,6 @@ const TaskItem: React.FC<TaskItemProps> = ({
       </div>
     </div>
   );
-}
+};
 
 export default TaskItem;
