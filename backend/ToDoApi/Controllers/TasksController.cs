@@ -18,12 +18,17 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks(
+    public async Task<ActionResult<TaskListResponse>> GetTasks(
         [FromQuery] TaskStatus? status = null,
         [FromQuery] TaskPriority? priority = null,
         [FromQuery] string? search = null,
-        [FromQuery] bool includeDeleted = false)
+        [FromQuery] bool includeDeleted = false,
+        [FromQuery] int? cursor = null,
+        [FromQuery] int limit = 10)
     {
+        if (limit > 100) limit = 100;
+        if (limit < 1) limit = 10;
+
         var query = _context.Tasks.AsQueryable();
 
         if (!includeDeleted)
@@ -46,7 +51,30 @@ public class TasksController : ControllerBase
             query = query.Where(t => t.Title.Contains(search));
         }
 
-        return await query.OrderBy(t => t.CreatedAt).ToListAsync();
+        if (cursor.HasValue)
+        {
+            query = query.Where(t => t.Id > cursor.Value);
+        }
+
+        query = query.OrderBy(t => t.Id);
+
+        var tasks = await query.Take(limit + 1).ToListAsync();
+
+        var hasNextPage = tasks.Count > limit;
+        if (hasNextPage)
+        {
+            tasks.RemoveAt(tasks.Count - 1);
+        }
+
+        var nextCursor = hasNextPage && tasks.Count > 0 ? tasks.Last().Id : (int?)null;
+
+        return new TaskListResponse
+        {
+            Tasks = tasks,
+            HasNextPage = hasNextPage,
+            NextCursor = nextCursor,
+            Limit = limit
+        };
     }
 
     [HttpGet("{id}")]

@@ -62,6 +62,48 @@
       "dueDate": "2025-09-02T00:00:00Z"
     },
     {
+      "title": "Optimize database queries",
+      "description": "Some queries are running slow in production",
+      "status": 0,
+      "priority": 1,
+      "tags": "[\"performance\", \"database\"]"
+    },
+    {
+      "title": "Update dependencies",
+      "description": "Several npm packages have security updates available",
+      "status": 0,
+      "priority": 1,
+      "tags": "[\"security\", \"maintenance\"]"
+    },
+    {
+      "title": "Create user onboarding flow",
+      "description": "New users need guided introduction to the app",
+      "status": 0,
+      "priority": 1,
+      "tags": "[\"ux\", \"frontend\"]"
+    },
+    {
+      "title": "Set up monitoring and alerts",
+      "description": "Need visibility into app performance and errors",
+      "status": 0,
+      "priority": 2,
+      "tags": "[\"monitoring\", \"devops\"]"
+    },
+    {
+      "title": "Implement dark mode",
+      "description": "Users are requesting dark theme option",
+      "status": 0,
+      "priority": 0,
+      "tags": "[\"ui\", \"feature\"]"
+    },
+    {
+      "title": "Add task categories",
+      "description": "Allow users to organize tasks into categories",
+      "status": 0,
+      "priority": 1,
+      "tags": "[\"feature\", \"organization\"]"
+    },
+    {
       "title": "Old task that was deleted",
       "description": "This task was completed and then deleted",
       "status": 2,

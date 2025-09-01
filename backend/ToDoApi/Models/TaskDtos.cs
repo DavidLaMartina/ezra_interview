@@ -2,6 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ToDoApi.Models;
 
+public class TaskListResponse
+{
+    public List<TaskItem> Tasks { get; set; } = [];
+    public bool HasNextPage { get; set; }
+    public int? NextCursor { get; set; }
+    public int Limit { get; set; }
+}
+
 public class CreateTaskRequest
 {
     [Required]
