@@ -7,6 +7,7 @@ using TaskStatus = ToDoApi.Models.TaskStatus;
 
 namespace ToDoApi.Controllers;
 
+[Microsoft.AspNetCore.Authorization.Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class TasksController : ControllerBase
@@ -31,6 +32,11 @@ public class TasksController : ControllerBase
         _logger = logger;
     }
 
+    private int GetCurrentUserId()
+    {
+        return int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+    }
+
     [HttpGet]
     public async Task<ActionResult<ApiResponse<TaskListResponse>>> GetTasks(
         [FromQuery] TaskStatus? status = null,
@@ -42,10 +48,13 @@ public class TasksController : ControllerBase
     {
         try
         {
+            var userId = GetCurrentUserId();
+
             if (limit > 100) limit = 100;
             if (limit < 1) limit = 10;
 
-            var query = _context.Tasks.AsQueryable();
+            var query = _context.Tasks.Where(t => t.UserId == userId);
+            // var query = _context.Tasks.AsQueryable();
 
             if (!includeDeleted)
             {
@@ -114,8 +123,10 @@ public class TasksController : ControllerBase
                 return BadRequest(ApiResponse<TaskItem>.ErrorResult("Invalid task ID"));
             }
 
+            var userId = GetCurrentUserId();
+
             var task = await _context.Tasks
-                .Where(t => t.DeletedAt == null)
+                .Where(t => t.DeletedAt == null && t.UserId == userId)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (task == null)
@@ -123,7 +134,7 @@ public class TasksController : ControllerBase
                 return NotFound(ApiResponse<TaskItem>.ErrorResult("Task not found"));
             }
 
-            _logger.LogInformation("Retrieved task with ID: {TaskId}", id);
+            _logger.LogInformation("Retrieved task with ID: {TaskId} for user: {UserId}", id, userId);
             return Ok(ApiResponse<TaskItem>.SuccessResult(task));
         }
         catch (Exception ex)
@@ -138,6 +149,8 @@ public class TasksController : ControllerBase
     {
         try
         {
+            var userId = GetCurrentUserId();
+
             var validationResult = await _createTaskValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
@@ -156,7 +169,8 @@ public class TasksController : ControllerBase
                 Description = request.Description,
                 Priority = request.Priority,
                 DueDate = request.DueDate,
-                Tags = request.Tags ?? "[]"
+                Tags = request.Tags ?? "[]",
+                UserId = userId
             };
 
             _context.Tasks.Add(task);
@@ -183,6 +197,8 @@ public class TasksController : ControllerBase
                 return BadRequest(ApiResponse.ErrorResult("Invalid task ID"));
             }
 
+            var userId = GetCurrentUserId();
+
             var validationResult = await _updateTaskValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
@@ -196,7 +212,7 @@ public class TasksController : ControllerBase
             }
 
             var task = await _context.Tasks
-                .Where(t => t.DeletedAt == null)
+                .Where(t => t.DeletedAt == null && t.UserId == userId)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (task == null)
@@ -214,7 +230,7 @@ public class TasksController : ControllerBase
 
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Updated task with ID: {TaskId}", id);
+            _logger.LogInformation("Updated task with ID: {TaskId} for user: {UserId}", id, userId);
             return Ok(ApiResponse.SuccessResult("Task updated successfully"));
         }
         catch (Exception ex)
@@ -234,8 +250,10 @@ public class TasksController : ControllerBase
                 return BadRequest(ApiResponse.ErrorResult("Invalid task ID"));
             }
 
+            var userId = GetCurrentUserId();
+
             var task = await _context.Tasks
-                .Where(t => t.DeletedAt == null)
+                .Where(t => t.DeletedAt == null && t.UserId == userId)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (task == null)
@@ -247,7 +265,7 @@ public class TasksController : ControllerBase
             task.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Soft deleted task with ID: {TaskId}", id);
+            _logger.LogInformation("Deleted task with ID: {TaskId} for user: {UserId}", id, userId);
             return Ok(ApiResponse.SuccessResult("Task deleted successfully"));
         }
         catch (Exception ex)
@@ -267,8 +285,10 @@ public class TasksController : ControllerBase
                 return BadRequest(ApiResponse.ErrorResult("Invalid task ID"));
             }
 
+            var userId = GetCurrentUserId();
+
             var task = await _context.Tasks
-                .Where(t => t.DeletedAt != null)
+                .Where(t => t.DeletedAt != null && t.UserId == userId)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (task == null)
@@ -295,6 +315,8 @@ public class TasksController : ControllerBase
     {
         try
         {
+            var userId = GetCurrentUserId();
+
             var validationResult = await _bulkUpdateValidator.ValidateAsync(request);
             if (!validationResult.IsValid)
             {
@@ -308,7 +330,7 @@ public class TasksController : ControllerBase
             }
 
             var tasks = await _context.Tasks
-                .Where(t => request.TaskIds.Contains(t.Id) && t.DeletedAt == null)
+                .Where(t => request.TaskIds.Contains(t.Id) && t.DeletedAt == null && t.UserId == userId)
                 .ToListAsync();
 
             if (!tasks.Any())
@@ -320,7 +342,9 @@ public class TasksController : ControllerBase
             {
                 var foundIds = tasks.Select(t => t.Id).ToList();
                 var missingIds = request.TaskIds.Except(foundIds).ToList();
-                return BadRequest(ApiResponse.ErrorResult($"Tasks not found: {string.Join(", ", missingIds)}"));
+                _logger.LogWarning("User {UserId} attempted to access tasks they don't own: {TaskIds}", 
+                    userId, string.Join(", ", missingIds));
+                return BadRequest(ApiResponse.ErrorResult("Some tasks not found or not accessible"));
             }
 
             foreach (var task in tasks)
@@ -341,7 +365,7 @@ public class TasksController : ControllerBase
             await _context.SaveChangesAsync();
 
             var action = request.Delete == true ? "deleted" : "updated";
-            _logger.LogInformation("Bulk {Action} {Count} tasks", action, tasks.Count);
+            _logger.LogInformation("Bulk {Action} {Count} tasks for user: {UserId}", action, tasks.Count, userId);
             
             return Ok(ApiResponse.SuccessResult($"{tasks.Count} tasks {action} successfully"));
         }

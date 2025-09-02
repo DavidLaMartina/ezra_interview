@@ -8,7 +8,17 @@ public static class DatabaseSeeder
 {
     public static async Task SeedAsync(ToDoDbContext context)
     {
-        if (context.Tasks.Count() > 0) return;
+        if (context.Tasks.Count() > 0 || context.Users.Count() > 0) return;
+
+        var demoUser = new User
+        {
+            Name = "Demo User",
+            Email = "demo@example.com",
+            PasswordHash = HashPassword("password123")
+        };
+
+        context.Users.Add(demoUser);
+        await context.SaveChangesAsync();
 
         var jsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "seed-data.json");
         if (!File.Exists(jsonPath))
@@ -29,7 +39,7 @@ public static class DatabaseSeeder
             return;
         }
 
-        var tasks = seedData!.Tasks.Select(seedTask => new TaskItem
+        var tasks = seedData.Tasks.Select(seedTask => new TaskItem
         {
             Title = seedTask.Title,
             Description = seedTask.Description,
@@ -37,13 +47,31 @@ public static class DatabaseSeeder
             Priority = (TaskPriority)seedTask.Priority,
             Tags = seedTask.Tags ?? "[]",
             DueDate = seedTask.DueDate,
-            DeletedAt = seedTask.DeletedAt
+            DeletedAt = seedTask.DeletedAt,
+            UserId = demoUser.Id
         }).ToList();
 
         context.Tasks.AddRange(tasks);
         await context.SaveChangesAsync();
 
         Console.WriteLine($"Seeded {tasks.Count} tasks into the database.");
+    }
+
+    // Simple hash for demo purposes
+    private static string HashPassword(string password)
+    {
+        using var rng = System.Security.Cryptography.RandomNumberGenerator.Create();
+        var salt = new byte[16];
+        rng.GetBytes(salt);
+
+        using var pbkdf2 = new System.Security.Cryptography.Rfc2898DeriveBytes(password, salt, 10000, System.Security.Cryptography.HashAlgorithmName.SHA256);
+        var hash = pbkdf2.GetBytes(32);
+
+        var hashBytes = new byte[48];
+        Array.Copy(salt, 0, hashBytes, 0, 16);
+        Array.Copy(hash, 0, hashBytes, 16, 32);
+
+        return Convert.ToBase64String(hashBytes);
     }
 }
 
