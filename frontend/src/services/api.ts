@@ -47,7 +47,7 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response,
+  response => response,
   (error: AxiosError) => {
     // If we get a 401, clear the stored auth data
     if (error.response?.status === 401) {
@@ -83,6 +83,8 @@ export const taskApi = {
       includeDeleted?: boolean;
       cursor?: number;
       limit?: number;
+      sortBy?: string;
+      sortOrder?: string;
     } = {}
   ): Promise<TaskListResponse> => {
     const finalParams = {

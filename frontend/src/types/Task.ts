@@ -51,7 +51,24 @@ export interface TaskListResponse {
   hasNextPage: boolean;
   nextCursor?: number;
   limit: number;
+  sortBy?: string;
+  sortOrder?: string;
 }
+
+export interface SortOption {
+  value: string;
+  label: string;
+}
+
+export const SORT_OPTIONS: SortOption[] = [
+  { value: '', label: 'Default' },
+  { value: 'duedate', label: 'Due Date' },
+  { value: 'created', label: 'Created Date' },
+  { value: 'updated', label: 'Updated Date' },
+  { value: 'priority', label: 'Priority' },
+  { value: 'status', label: 'Status' },
+  { value: 'title', label: 'Title' },
+];
 
 export interface CreateTaskRequest {
   title: string;

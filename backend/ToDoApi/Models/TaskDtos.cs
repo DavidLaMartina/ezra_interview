@@ -8,6 +8,8 @@ public class TaskListResponse
     public bool HasNextPage { get; set; }
     public int? NextCursor { get; set; }
     public int Limit { get; set; }
+    public string? SortBy { get; set; }
+    public string? SortOrder{ get; set; }
 }
 
 public class CreateTaskRequest
