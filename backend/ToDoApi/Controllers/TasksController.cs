@@ -88,7 +88,7 @@ public class TasksController : ControllerBase
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(t => t.Title.Contains(search));
+                query = query.Where(t => t.Title.ToLower().Contains(search.ToLower()));
             }
 
             query = ApplySorting(query, sortBy, sortOrder);
