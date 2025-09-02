@@ -1,0 +1,201 @@
+/* RegisterForm specific styles - extends AuthPage.css and LoginForm.css */
+
+.auth-form input[type='text'] {
+  background-color: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 1rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.auth-form input[type='text']:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background-color: #fff;
+}
+
+.auth-form input[type='text'].error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.auth-form input[type='text']:disabled {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Password strength indicator */
+.password-strength {
+  margin-top: 8px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: #e9ecef;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.password-strength.weak {
+  background: linear-gradient(to right, #dc3545 0%, #dc3545 33%, #e9ecef 33%, #e9ecef 100%);
+}
+
+.password-strength.medium {
+  background: linear-gradient(to right, #ffc107 0%, #ffc107 66%, #e9ecef 66%, #e9ecef 100%);
+}
+
+.password-strength.strong {
+  background: linear-gradient(to right, #28a745 0%, #28a745 100%);
+}
+
+/* Form validation styling */
+.auth-form .form-group.has-error input {
+  border-color: #dc3545;
+  animation: shake 0.5s ease-in-out;
+}
+
+.auth-form .form-group.has-success input {
+  border-color: #28a745;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Enhanced help text for password requirements */
+.auth-form .help-text {
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-top: 6px;
+  line-height: 1.4;
+  display: block;
+}
+
+.auth-form .help-text.password-requirements {
+  color: #495057;
+}
+
+.auth-form .help-text ul {
+  margin: 4px 0 0 0;
+  padding-left: 16px;
+  list-style: none;
+}
+
+.auth-form .help-text li {
+  position: relative;
+  margin: 2px 0;
+  padding-left: 16px;
+}
+
+.auth-form .help-text li:before {
+  content: '✗';
+  position: absolute;
+  left: 0;
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.auth-form .help-text li.valid:before {
+  content: '✓';
+  color: #28a745;
+}
+
+/* Enhanced error states */
+.error-text {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 6px;
+  display: block;
+  font-weight: 500;
+}
+
+.error-text:before {
+  content: '⚠ ';
+  font-weight: bold;
+}
+
+/* Success states */
+.success-text {
+  color: #28a745;
+  font-size: 0.8rem;
+  margin-top: 6px;
+  display: block;
+  font-weight: 500;
+}
+
+.success-text:before {
+  content: '✓ ';
+  font-weight: bold;
+}
+
+/* Form animations */
+.auth-form {
+  animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced button states for registration */
+.auth-form .auth-submit-btn.creating {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.auth-form .auth-submit-btn.creating:hover:not(:disabled) {
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
+/* Responsive adjustments for registration form */
+@media (max-width: 480px) {
+  .auth-form input[type='text'] {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+  }
+
+  .auth-form .help-text {
+    font-size: 0.75rem;
+  }
+
+  .auth-form .help-text ul {
+    padding-left: 14px;
+  }
+
+  .auth-form .help-text li {
+    padding-left: 14px;
+  }
+}
+
+/* Focus states for better accessibility */
+.auth-form input:focus {
+  outline: none;
+}
+
+.auth-form .link-button:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.auth-form .auth-submit-btn:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}

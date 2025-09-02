@@ -165,13 +165,6 @@ const TaskManager: React.FC = () => {
 
   return (
     <div className="task-manager">
-      <div className="task-manager-header">
-        <h1>{config.app.name}</h1>
-        <button className="btn btn-primary" onClick={() => setShowCreateForm(true)}>
-          + Add Task
-        </button>
-      </div>
-
       <FilterBar
         statusFilter={statusFilter}
         priorityFilter={priorityFilter}
@@ -222,6 +215,11 @@ const TaskManager: React.FC = () => {
       {showCreateForm && (
         <TaskForm onSubmit={handleCreateTask} onCancel={() => setShowCreateForm(false)} />
       )}
+
+      {/* Add floating action button for mobile */}
+      <button className="fab-button" onClick={() => setShowCreateForm(true)} title="Add Task">
+        +
+      </button>
     </div>
   );
 };

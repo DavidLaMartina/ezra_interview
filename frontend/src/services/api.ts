@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import axios, { AxiosError } from 'axios';
 import { config } from '../config/env';
 import {
@@ -33,6 +34,31 @@ const handleApiError = (error: AxiosError): never => {
     throw new ApiError('An unexpected error occurred', 0);
   }
 };
+
+api.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    // If we get a 401, clear the stored auth data
+    if (error.response?.status === 401) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      // Optionally redirect to login
+      window.location.href = '/login';
+    }
+    handleApiError(error);
+  }
+);
 
 api.interceptors.response.use(
   response => response,

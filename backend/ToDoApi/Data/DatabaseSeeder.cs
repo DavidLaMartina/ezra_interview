@@ -14,7 +14,7 @@ public static class DatabaseSeeder
         {
             Name = "Demo User",
             Email = "demo@example.com",
-            PasswordHash = HashPassword("password123")
+            PasswordHash = HashPassword("Password123")
         };
 
         context.Users.Add(demoUser);
