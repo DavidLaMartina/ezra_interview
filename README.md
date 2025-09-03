@@ -64,6 +64,9 @@ dotnet restore
 # Install Entity Framework tools globally (if not already installed)
 dotnet tool install --global dotnet-ef
 
+# Create new migration
+dotnet ef migrations add InitialCreate
+
 # Create initial database and apply migrations
 dotnet ef database update
 
@@ -80,6 +83,9 @@ cd frontend
 
 # Install dependencies
 npm install
+
+# Set up environment (copy .env.local.example to .env.local)
+cp .env.local.example .env.local
 
 # Start the development server
 npm start
